@@ -43,6 +43,7 @@ RUN set -x \
         locales \
         ldnsutils \
         python2.7 \
+        python-setuptools \
         python-jinja2 \
         ca-certificates \
         libyaml-0-2 \
@@ -66,6 +67,13 @@ RUN set -x \
     && /usr/sbin/update-locale LANG=C.UTF-8 \
     && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
     && locale-gen \
+    && cd /tmp \
+    && git clone https://github.com/abusesa/idiokit \
+    && git clone https://github.com/abusesa/abusehelper \
+    && cd /tmp/idiokit \
+    && python setup.py install \
+    && cd /tmp/abusehelper \
+    && python setup.py install \
     && cd /tmp \
     && git clone https://github.com/processone/ejabberd.git \
         --branch $EJABBERD_BRANCH --single-branch --depth=1 \
@@ -115,6 +123,9 @@ RUN set -ex; \
 # Create logging directories
 RUN mkdir -p /var/log/ejabberd
 RUN touch /var/log/ejabberd/crash.log /var/log/ejabberd/error.log /var/log/ejabberd/erlang.log
+RUN mkdir -p /var/lib/ah2/feed/log/ /var/lib/ah2/feed/archive/ 
+RUN touch /var/lib/ah2/feed/log/startup.py.log
+RUN chown -R $EJABBERD_USER: /var/lib/ah2/feed/
 
 # Wrapper for setting config on disk from environment
 # allows setting things like XMPP domain at runtime
@@ -125,6 +136,7 @@ ADD ./scripts $EJABBERD_HOME/scripts
 ADD https://raw.githubusercontent.com/rankenstein/ejabberd-auth-mysql/master/auth_mysql.py $EJABBERD_HOME/scripts/lib/auth_mysql.py
 RUN chmod a+rx $EJABBERD_HOME/scripts/lib/auth_mysql.py
 RUN chmod +x /usr/local/lib/eimp*/priv/bin/eimp
+ADD startup.py /var/lib/ah2/feed/startup.py
 
 # Add config templates
 ADD ./conf /opt/ejabberd/conf

@@ -24,6 +24,17 @@ register_user() {
 }
 
 
+feed_user() {
+    local user=$1
+    local domain=$2
+    local password=$3
+
+    echo xmpp_jid="'${user}@${domain}'" > \
+	${FEEDDIR}/credentials.py
+    echo xmpp_password="'${password}'" >> \
+	${FEEDDIR}/credentials.py
+}
+
 register_all_users() {
     # register users from environment $EJABBERD_USERS with given
     # password or random password written to stout. Use whitespace
@@ -47,6 +58,7 @@ register_all_users() {
         [[ "${password}" == "${jid}" ]] \
             && password=$(randpw)
 
+        feed_user ${username} ${domain} ${password}
         register_user ${username} ${domain} ${password}
         local retval=$?
 

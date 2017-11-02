@@ -78,12 +78,14 @@ case "$@" in
         pre_scripts
         tail -n 0 -F ${LOGDIR}/crash.log \
                 ${LOGDIR}/error.log \
-                ${LOGDIR}/erlang.log &
+                ${LOGDIR}/erlang.log \
+                ${FEEDDIR}/log/startup.py.log &
         echo "Starting ejabberd..."
         exec ${EJABBERDCTL} "foreground" &
         child=$!
         ${EJABBERDCTL} "started"
         post_scripts
+	exec /usr/local/bin/botnet start ${FEEDDIR} &
         wait $child
     ;;
     live)

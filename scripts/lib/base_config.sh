@@ -15,6 +15,8 @@ readonly LOGDIR="/usr/local/var/log/ejabberd"
 readonly FIRST_START_DONE_FILE="/${EJABBERD_HOME}/first-start-done"
 readonly CLUSTER_NODE_FILE="/${EJABBERD_HOME}/cluster-done"
 
+readonly FEEDDIR="/var/lib/ah2/feed"
+
 readonly PYTHON_JINJA2="import os;
 import sys;
 import jinja2;
